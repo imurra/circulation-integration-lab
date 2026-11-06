@@ -193,6 +193,24 @@ table.db{border-collapse:collapse;width:100%;font-size:.92rem}
 .seg button:disabled{cursor:default;opacity:1}
 .sidebox{margin-top:.8rem;padding:.6rem;border:1.5px dashed var(--line);border-radius:8px}
 .sidebox .lab{font-weight:700;margin-bottom:.45rem}
+/* laptop / desktop */
+.card{container-type:inline-size}
+.sg-side .sidebox{margin-top:0}
+.sg-side .fsrow{margin-top:.8rem}
+@container (min-width:44rem){
+  .sg{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:1rem;align-items:start}
+  .sg-side .fsrow{grid-template-columns:minmax(0,1fr)}
+  .sg-side .fs.mini{max-width:22rem}
+  .sg-side .sidebox .node{flex-basis:100%}
+}
+@media (min-width:981px){
+  .layout>.panel{position:sticky;top:.6rem}
+  .node{padding:.2rem .4rem .2rem .7rem;font-size:1rem}
+  .node .seg button{height:1.85rem;width:2.4rem;font-size:1.1rem}
+  .down{font-size:1.05rem;line-height:1.05}
+  .card .q{margin-bottom:.5rem}
+  .tier:has(> .node:nth-child(4)) > .node{flex:0 1 calc(50% - .25rem);max-width:none}
+}
 </style>
 
 <header class="band pad"><div class="bandrow">
@@ -405,12 +423,13 @@ function node(k,store,ans,why,done){const v=store[k],ok=done&&accept(ans[k],v);
   const bt=['u','s','d'].map(a=>{let c='';if(done){if(a===v)c=ok?'pk-ok':'pk-no';else if(!ok&&accept(ans[k],a))c='pk-ans';}
     return `<button type="button" class="${c}" aria-label="${LBL[k]} ${a==='u'?'increases':a==='d'?'decreases':'unchanged'}" aria-pressed="${v===a}" data-k="${k}" data-v="${a}" ${done?'disabled':''}>${AR[a]}</button>`;}).join('');
   return `<div class="node ${done?(ok?'ok':'no'):''}"><span>${LBL[k]}${done?' '+tagS(ITAG[k]):''}</span><span class="seg">${bt}</span>${done?`<span class="why">${ok?'<b>Correct.</b> ':`<b>Not quite: ${fmt(ans[k])}.</b> `}${why[k]||''}</span>`:''}</div>`;}
-function flowHTML(f,store,ans,why,sideLab,done){
+function flowHTML(f,store,ans,why,sideLab,done,extra){
   let h=`<div class="flowc"><div class="node start">${f.start}</div>`;
   f.tiers.forEach(t=>{h+=`<div class="down" aria-hidden="true">↓</div><div class="tier">${t.map(k=>node(k,store,ans,why,done)).join('')}</div>`;});
   h+=`</div>`;
-  if(f.side.length) h+=`<div class="sidebox"><div class="lab">${sideLab}</div><div class="tier">${f.side.map(k=>node(k,store,ans,why,done)).join('')}</div></div>`;
-  return h;}
+  let side=f.side.length?`<div class="sidebox"><div class="lab">${sideLab}</div><div class="tier">${f.side.map(k=>node(k,store,ans,why,done)).join('')}</div></div>`:'';
+  side+=extra||'';
+  return side?`<div class="sg"><div class="sg-main">${h}</div><div class="sg-side">${side}</div></div>`:h;}
 const keys=f=>[...f.tiers.flat(),...f.side];
 const LIMIT=10*60*1000; let t0=null, tick=null;
 const expired=()=>t0!==null&&Date.now()-t0>=LIMIT;
@@ -447,11 +466,11 @@ function renderRight(){
     if(p.fsPt) pts.push({n:sd?'yours':'X′',edv:p.fsPt.edv,sv:p.fsPt.sv,col:'var(--pred)',below:true,ghost:sd});
     if(sd) pts.push({n:'X′',edv:s.P.edv,sv:s.P.sv,col:'var(--ok)',right:true});
     h=`<h2>What happens because of it?</h2><p class="q">Snapshot: the first heartbeat or two after the change, before the baroreceptor reflex has time to respond. Follow the chain in order and mark each change.</p>`+
-      flowHTML(s.f2,p.p2,s.a2,s.w2,'Before reflexes: did these change?',p.s2done)+
+      flowHTML(s.f2,p.p2,s.a2,s.w2,'Before reflexes: did these change?',p.s2done,
       `<div class="fsrow"><svg class="fs mini${sd?'':' tap'}" id="fsTap" viewBox="0 0 ${FW} ${FH}" role="img" aria-label="Tap to place X prime on the Frank-Starling plot">${fsSVG(pts)}</svg>
        <div class="fsq"><div class="lab">Frank-Starling: tap the plot to place X′</div>
         <div>${p.fsPt?`You placed X′ <b>${FSDESC[cls]}</b>.`:'Where does the heart operate now, before any reflex?'}</div>
-        ${sd?`<div class="fb ${fsOk?'ok':'no'}" style="margin-top:.5rem">${fsOk?'Correct.':'Not quite.'} ${s.fsNote} ${tagS('A1')} ${tagS('A2')}</div>`:''}</div></div>`;
+        ${sd?`<div class="fb ${fsOk?'ok':'no'}" style="margin-top:.5rem">${fsOk?'Correct.':'Not quite.'} ${s.fsNote} ${tagS('A1')} ${tagS('A2')}</div>`:''}</div></div>`);
     if(!p.s2done){const full=keys(s.f2).every(k=>p.p2[k])&&p.fsPt;h+=`<div class="row"><button class="go" id="sub" type="button" ${full?'':'disabled'} title="${full?'':'Answer every item and place X′ first'}">Next: check answers →</button><button class="link" id="rev" type="button">Reveal</button></div>`;}
     else{const ks=keys(s.f2),n=ks.filter(k=>accept(s.a2[k],p.p2[k])).length+(fsOk?1:0);
       h+=`<div class="fb ${n===ks.length+1?'ok':'part'}"><b>${n} of ${ks.length+1} correct.</b><span class="chainline">${s.chain2}</span>${LEGEND}</div><div class="row"><button class="go" id="next" type="button">Next: baroreceptor reflex →</button></div>`;}
