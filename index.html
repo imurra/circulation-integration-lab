@@ -195,13 +195,19 @@ table.db{border-collapse:collapse;width:100%;font-size:.92rem}
 .sidebox .lab{font-weight:700;margin-bottom:.45rem}
 /* laptop / desktop */
 .card{container-type:inline-size}
-.sg-side .sidebox{margin-top:0}
+.sg-side .sidebox{margin-top:.8rem}
 .sg-side .fsrow{margin-top:.8rem}
-@container (min-width:44rem){
-  .sg{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:1rem;align-items:start}
-  .sg-side .fsrow{grid-template-columns:minmax(0,1fr)}
+@container (min-width:34rem){
+  .sg-side{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:.8rem;align-items:start;margin-top:.8rem}
+  .sg-side .sidebox,.sg-side .fsrow{margin-top:0}
+  .sg-side .fsrow{grid-template-columns:minmax(0,1fr);gap:.4rem}
   .sg-side .fs.mini{max-width:22rem}
   .sg-side .sidebox .node{flex-basis:100%}
+}
+@container (min-width:56rem){
+  .sg{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:1rem;align-items:start}
+  .sg-side{display:block;margin-top:0}
+  .sg-side .fsrow{margin-top:.8rem}
 }
 @media (min-width:981px){
   .layout>.panel{position:sticky;top:.6rem}
@@ -209,7 +215,7 @@ table.db{border-collapse:collapse;width:100%;font-size:.92rem}
   .node .seg button{height:1.85rem;width:2.4rem;font-size:1.1rem}
   .down{font-size:1.05rem;line-height:1.05}
   .card .q{margin-bottom:.5rem}
-  .tier:has(> .node:nth-child(4)) > .node{flex:0 1 calc(50% - .25rem);max-width:none}
+  .flowc > .tier:has(> .node:nth-child(4)) > .node{flex:0 1 calc(50% - .25rem);max-width:none}
 }
 </style>
 
@@ -301,14 +307,14 @@ const SC={
   start:'Starting change: <b>arteriolar dilation → SVR ↓</b>.',
   q1:'What is the primary vascular response?', site:'arterioles', change:'artDil', partial:{venodil:'The veins are not the target here. The defining change is in the resistance vessels.'},
   fb1:'Arteriolar resistance ↓ → SVR ↓.',
-  pre:{edv:120,c:1,hr:72,svr:11.5,skin:'warm'}, comp:{edv:122,c:1.06,hr:84,svr:12.2,skin:'warm'},
-  a2:{vr:['s','u'],edv:['s','u'],hr:'s',sv:['s','u'],co:['s','u'],svr:'d',map:'d',skin:'u'}, fs:['none','along'],
+  pre:{edv:116,c:1.15,hr:72,svr:11.5,skin:'warm'}, comp:{edv:118,c:1.22,hr:84,svr:12.0,skin:'warm'},
+  a2:{vr:['s','u'],edv:['d','s'],hr:'s',sv:'u',co:'u',svr:'d',map:'d',skin:'u'}, fs:['shift'],
   n2:{vr:'VR = CO at steady state; with veins unaffected, it holds or rises a little.',edv:'Unchanged at first; can rise a little as more blood reaches the veins.',sv:'SV holds (filling unchanged).',co:'Unchanged, or slightly higher.'},
-  chain2:'Arteriolar resistance ↓ → SVR ↓ → tissue flow ↑ (skin warm, red) and MAP ↓ (MAP ≈ CO × SVR)',
+  chain2:'Arteriolar resistance ↓ → SVR ↓ → afterload ↓ → SV ↑ → CO ↑; skin and tissue flow ↑ (warm, red); MAP ↓ because SVR falls more than CO rises (MAP ≈ CO × SVR)',
   a3:{firing:'d',symp:'u',vagal:'d',hr:'u',contr:'u',ven:'u',art:'u',co:'u',map:'u'}, n3:{art:'In beds the drug has not fully relaxed.'},
   chain3:'MAP ↓ → firing ↓ → sympathetic ↑, vagal ↓ → HR ↑, contractility ↑, venous tone ↑, arteriolar tone ↑. Bonus (later in KIFS): RAAS activation causes Na⁺ and water retention over days.',
   take:'SVR is the variable that failed, so the reflex can only partly restore MAP, mostly by raising CO. Skin stays warm and flushed. Blood loss is the mirror image: CO falls, SVR rises, skin goes cool and pale.',
-  badges:{pre:{veins:'',heart:'',art:'Dilated · SVR ↓'},comp:{veins:'Venous tone ↑',heart:'HR ↑ · contractility ↑',art:'Tone ↑ (partial)'}},
+  badges:{pre:{veins:'',heart:'SV ↑ (afterload ↓)',art:'Dilated · SVR ↓'},comp:{veins:'Venous tone ↑',heart:'HR ↑ · contractility ↑',art:'Tone ↑ (partial)'}},
   look:{pre:{vw:['',0],va:'',aa:'out'},comp:{vw:['',0],va:'in',aa:'out'}},
   cmp:{vr:'↑ or ↔ (VR = CO)',co:'↑ or ↔',svr:'↓',map:'Partly restored, mainly by ↑ CO',skin:'↑',app:'Warm, flushed'}
  }
@@ -316,15 +322,15 @@ const SC={
 const ORDER=['blood','vaso'];
 ORDER.forEach(k=>{SC[k].P=calc(SC[k].pre);SC[k].C=calc(SC[k].comp);});
 SC.blood.f2={start:'Blood volume ↓',tiers:[['vr'],['edv'],['sv'],['co'],['map'],['skin']],side:['hr','svr']};
-SC.vaso.f2={start:'Arteriolar dilation',tiers:[['svr'],['map','skin']],side:['vr','edv','sv','co','hr']};
+SC.vaso.f2={start:'Arteriolar dilation',tiers:[['svr'],['sv','skin'],['co'],['map']],side:['vr','edv','hr']};
 SC.blood.f3=SC.vaso.f3={start:'MAP ↓ (from step 1)',tiers:[['firing'],['symp','vagal'],['hr','contr','ven','art'],['co'],['map']],side:[]};
 SC.blood.w2={vr:'Less blood volume → venous pressure ↓ → less blood returns to the heart.',edv:'Less venous return → less filling.',sv:'Less filling → a lower point on the same Frank-Starling curve → SV ↓.',co:'CO = HR × SV: HR is unchanged and SV ↓.',map:'MAP ≈ CO × SVR: SVR is unchanged and CO ↓.',skin:'Flow = ΔP/R: MAP has fallen while skin resistance is unchanged, so skin flow falls.',hr:'Unchanged until the reflex acts.',svr:'The arterioles are not the primary change, and the reflex has not acted yet, so SVR is unchanged.'};
-SC.vaso.w2={svr:'Arterioles dilate → resistance ↓ → SVR ↓.',map:'MAP ≈ CO × SVR: CO has not fallen and SVR ↓, so MAP ↓.',skin:'Skin arterioles dilate → resistance ↓ → skin flow ↑ (warm, red).',vr:'VR = CO at steady state; with veins unaffected, it holds or rises a little.',edv:'Unchanged at first; can rise a little as more blood reaches the veins.',sv:'SV holds (filling unchanged).',co:'Unchanged, or slightly higher.',hr:'Unchanged until the reflex acts.'};
+SC.vaso.w2={svr:'Arterioles dilate → resistance ↓ → SVR ↓.',sv:'Lower SVR means lower afterload: the ventricle ejects more each beat, so SV ↑ (end-systolic volume ↓).',skin:'Skin arterioles dilate → resistance ↓ → skin flow ↑ (warm, red).',co:'CO = HR × SV: HR is unchanged and SV ↑, so CO ↑. CO does not fall here because the veins are not affected.',map:'MAP ≈ CO × SVR: SVR falls more than CO rises, so MAP ↓.',vr:'Lower arterial pressure shifts blood toward the veins, so venous return holds or rises a little (VR = CO at steady state).',edv:'With more blood ejected each beat, less is left in the ventricle, so filling falls slightly or holds.',hr:'Unchanged until the reflex acts.'};
 const W3={firing:'Lower MAP → less stretch of the carotid sinus and aortic arch → baroreceptor firing ↓.',symp:'Less firing → the medulla increases sympathetic outflow.',vagal:'Less firing → vagal outflow to the SA node ↓.',hr:'Sympathetic ↑ and vagal ↓ at the SA node → HR ↑.',contr:'Sympathetic ↑ (β1) → contractility ↑.',co:'CO = HR × SV: HR ↑, and contractility ↑ with venoconstriction raises SV.'};
 SC.blood.w3={...W3,ven:'Venoconstriction pushes reservoir blood toward the heart, so filling rises again.',art:'Skin, gut, kidney and resting skeletal muscle arterioles constrict (SVR ↑); brain and heart are spared.',map:'MAP ≈ CO × SVR: both rise, so MAP returns near normal.'};
 SC.vaso.w3={...W3,ven:'Venoconstriction pushes reservoir blood toward the heart.',art:'Arteriolar tone ↑ in beds the drug has not fully relaxed (SVR partly restored).',map:'CO ↑ and SVR partly ↑ → MAP rises, but stays below normal.'};
 SC.blood.fsAns=['along-down']; SC.blood.fsNote='Filling fell and contractility did not change, so X′ slides down the same curve.';
-SC.vaso.fsAns=['none','along-up']; SC.vaso.fsNote='Filling and contractility are unchanged, so X′ stays at X (or creeps slightly up the same curve if filling rises).';
+SC.vaso.fsAns=['shift-up']; SC.vaso.fsNote='Afterload ↓ lets the ventricle eject more at the same (or slightly lower) filling, so X′ moves up onto a higher curve.'; SC.vaso.fsCurve=[[1.15,'afterload ↓']];
 SC.blood.fb1tag='A1'; SC.vaso.fb1tag='A3';
 SC.blood.debrief='MAP is back near normal, but CO and skin flow are still low. A normal MAP does not mean normal tissue perfusion.';
 SC.vaso.debrief='Tissue and skin flow are high, but MAP is still below normal. The reflex cannot fully fix the variable that failed (SVR), so it leans on CO.';
@@ -467,7 +473,7 @@ function renderRight(){
     if(sd) pts.push({n:'X′',edv:s.P.edv,sv:s.P.sv,col:'var(--ok)',right:true});
     h=`<h2>What happens because of it?</h2><p class="q">Snapshot: the first heartbeat or two after the change, before the baroreceptor reflex has time to respond. Follow the chain in order and mark each change.</p>`+
       flowHTML(s.f2,p.p2,s.a2,s.w2,'Before reflexes: did these change?',p.s2done,
-      `<div class="fsrow"><svg class="fs mini${sd?'':' tap'}" id="fsTap" viewBox="0 0 ${FW} ${FH}" role="img" aria-label="Tap to place X prime on the Frank-Starling plot">${fsSVG(pts)}</svg>
+      `<div class="fsrow"><svg class="fs mini${sd?'':' tap'}" id="fsTap" viewBox="0 0 ${FW} ${FH}" role="img" aria-label="Tap to place X prime on the Frank-Starling plot">${fsSVG(pts,sd&&s.fsCurve?s.fsCurve:[])}</svg>
        <div class="fsq"><div class="lab">Frank-Starling: tap the plot to place X′</div>
         <div>${p.fsPt?`You placed X′ <b>${FSDESC[cls]}</b>.`:'Where does the heart operate now, before any reflex?'}</div>
         ${sd?`<div class="fb ${fsOk?'ok':'no'}" style="margin-top:.5rem">${fsOk?'Correct.':'Not quite.'} ${s.fsNote} ${tagS('A1')} ${tagS('A2')}</div>`:''}</div></div>`);
