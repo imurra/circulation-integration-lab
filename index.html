@@ -97,7 +97,7 @@ h1{font-family:var(--display);font-weight:800;font-size:1.6rem;margin:0;line-hei
 .swatch{width:2.4rem;height:1.4rem;border-radius:.7rem;border:1px solid var(--line);transition:background .6s;flex:none}
 .note{font-size:.7rem;color:var(--muted);margin:.4rem 0 0}
 /* right column */
-.stepper{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.35rem;margin-bottom:.7rem}
+.stepper{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.35rem;margin-bottom:.7rem}
 .sbtn{background:var(--surface);border:1.5px solid var(--line);border-radius:8px;padding:.4rem .5rem;text-align:left;font-size:.8rem;line-height:1.2;color:var(--muted)}
 .sbtn b{display:block;font-family:var(--display);font-size:.95rem;color:var(--ink)}
 .sbtn[aria-current="step"]{background:var(--plum);border-color:var(--plum);color:#e9d6e6}
@@ -169,7 +169,11 @@ table.db{border-collapse:collapse;width:100%;font-size:.92rem}
 .colbtn[aria-pressed="true"]{background:var(--plum);color:var(--plum-ink);border-color:var(--plum)}
 .tscroll{overflow-x:auto;min-width:0}
 .tags{margin:.6rem 0 0;display:flex;gap:.4rem;flex-wrap:wrap}
-@media (max-width:560px){.stepper{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.stepper{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.refs{margin:.4rem 0 0;padding-left:1.3rem;line-height:1.45}
+.refs li{margin-bottom:.55rem}
+.refs a{color:var(--plum);font-weight:700}
+@media (prefers-color-scheme:dark){.refs a{color:var(--ink)}}
 .pred{grid-template-columns:auto minmax(0,1fr) auto}
 .rank{font:inherit;font-size:1rem;font-weight:800;width:3.4rem;height:2.1rem;border:1.5px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);text-align:center}
 .rank:disabled{opacity:1}
@@ -294,10 +298,10 @@ const SC={
   pre:{edv:80,c:1,hr:72,svr:17.86,skin:'dim'}, comp:{edv:86,c:1.03,hr:96,svr:19.5,skin:'pale'},
   a2:{vr:'d',edv:'d',hr:'s',sv:'d',co:'d',svr:'s',map:'d',skin:'d'}, fs:['along'],
   n2:{hr:'Unchanged until the reflex acts.',skin:'Flow = ΔP/R: MAP has fallen by about 40% while skin resistance is unchanged, so skin flow falls in proportion.'},
-  chain2:'Blood volume ↓ → venous pressure ↓ → venous return ↓ → filling (EDV) ↓ → lower point on the same Frank-Starling curve → SV ↓ → CO ↓ → MAP ↓ → tissue flow ↓',
+  chain2:'Blood volume ↓ → central venous pressure ↓ → venous return ↓ → filling (EDV) ↓ → lower point on the same Frank-Starling curve → SV ↓ → CO ↓ → MAP ↓ → tissue flow ↓',
   a3:{firing:'d',symp:'u',vagal:'d',hr:'u',contr:'u',ven:'u',art:'u',co:'u',map:'u'}, n3:{art:'Skin, gut, kidney and resting skeletal muscle arterioles constrict; brain and heart are spared.',ven:'Venoconstriction pushes reservoir blood toward the heart, so filling rises again.'},
   chain3:'MAP ↓ → less stretch → firing ↓ → sympathetic ↑, vagal ↓ → HR ↑, contractility ↑, venoconstriction, SVR ↑. Bonus (later in KIFS): angiotensin II and ADH also constrict arterioles directly; RAAS and ADH conserve Na⁺ and water in the kidney; thirst increases.',
-  take:'Compared with normal, CO is still low and SVR is high: in MAP ≈ CO × SVR, the raised SVR makes up for the low CO. Arteriolar constriction also lowers capillary pressure, so interstitial fluid moves into the capillaries and partly refills blood volume. Bedside clues: tachycardia (often the first sign), narrow pulse pressure, cool pale skin, delayed capillary refill. A normal MAP does not prove normal tissue perfusion; if bleeding continues, MAP eventually falls.',
+  take:'Compared with normal, CO is still low and SVR is high: in MAP ≈ CO × SVR, the raised SVR makes up for the low CO. Arteriolar constriction also lowers capillary pressure, so interstitial fluid moves into the capillaries (up to about 1 L/h) and partly refills blood volume; this fluid has no cells, so hematocrit falls. Bedside clues at this degree of loss: tachycardia with a normal blood pressure, narrowed pulse pressure, cool pale skin, delayed capillary refill, reduced urine output. A normal MAP does not prove normal tissue perfusion; if bleeding continues, MAP eventually falls.',
   badges:{pre:{veins:'Blood volume ↓',heart:'Filling ↓',art:''},comp:{veins:'Venoconstriction',heart:'HR ↑ · contractility ↑',art:'Constricted · SVR ↑'}},
   look:{pre:{vw:['empty',.5],va:'',aa:''},comp:{vw:['empty',.3],va:'in',aa:'in'}},
   cmp:{vr:'↓ (VR = CO)',co:'↓',svr:'↑',map:'Near normal: high SVR offsets low CO',skin:'↓',app:'Cool, pale'}
@@ -324,7 +328,7 @@ ORDER.forEach(k=>{SC[k].P=calc(SC[k].pre);SC[k].C=calc(SC[k].comp);});
 SC.blood.f2={start:'Blood volume ↓',tiers:[['vr'],['edv'],['sv'],['co'],['map'],['skin']],side:['hr','svr']};
 SC.vaso.f2={start:'Arteriolar dilation',tiers:[['svr'],['sv','skin'],['co'],['map']],side:['vr','edv','hr']};
 SC.blood.f3=SC.vaso.f3={start:'MAP ↓ (from step 1)',tiers:[['firing'],['symp','vagal'],['hr','contr','ven','art'],['co'],['map']],side:[]};
-SC.blood.w2={vr:'Less blood volume → venous pressure ↓ → less blood returns to the heart.',edv:'Less venous return → less filling.',sv:'Less filling → a lower point on the same Frank-Starling curve → SV ↓.',co:'CO = HR × SV: HR is unchanged and SV ↓.',map:'MAP ≈ CO × SVR: SVR is unchanged and CO ↓.',skin:'Flow = ΔP/R: MAP has fallen while skin resistance is unchanged, so skin flow falls.',hr:'Unchanged until the reflex acts.',svr:'The arterioles are not the primary change, and the reflex has not acted yet, so SVR is unchanged.'};
+SC.blood.w2={vr:'Less blood volume → central venous pressure ↓ → less blood returns to the heart.',edv:'Less venous return → less filling.',sv:'Less filling → a lower point on the same Frank-Starling curve → SV ↓.',co:'CO = HR × SV: HR is unchanged and SV ↓.',map:'MAP ≈ CO × SVR: SVR is unchanged and CO ↓.',skin:'Flow = ΔP/R: MAP has fallen while skin resistance is unchanged, so skin flow falls.',hr:'Unchanged until the reflex acts.',svr:'The arterioles are not the primary change, and the reflex has not acted yet, so SVR is unchanged.'};
 SC.vaso.w2={svr:'Arterioles dilate → resistance ↓ → SVR ↓.',sv:'Lower SVR means lower afterload: the ventricle ejects more each beat, so SV ↑ (end-systolic volume ↓).',skin:'Skin arterioles dilate → resistance ↓ → skin flow ↑ (warm, red).',co:'CO = HR × SV: HR is unchanged and SV ↑, so CO ↑. CO does not fall here because the veins are not affected.',map:'MAP ≈ CO × SVR: SVR falls more than CO rises, so MAP ↓.',vr:'Lower arterial pressure shifts blood toward the veins, so venous return holds or rises a little (VR = CO at steady state).',edv:'With more blood ejected each beat, less is left in the ventricle, so filling falls slightly or holds.',hr:'Unchanged until the reflex acts.'};
 const W3={firing:'Lower MAP → less stretch of the carotid sinus and aortic arch → baroreceptor firing ↓.',symp:'Less firing → the medulla increases sympathetic outflow.',vagal:'Less firing → vagal outflow to the SA node ↓.',hr:'Sympathetic ↑ and vagal ↓ at the SA node → HR ↑.',contr:'Sympathetic ↑ (β1) → contractility ↑.',co:'CO = HR × SV: HR ↑, and contractility ↑ with venoconstriction raises SV.'};
 SC.blood.w3={...W3,ven:'Venoconstriction pushes reservoir blood toward the heart, so filling rises again.',art:'Skin, gut, kidney and resting skeletal muscle arterioles constrict (SVR ↑); brain and heart are spared.',map:'MAP ≈ CO × SVR: both rise, so MAP returns near normal.'};
@@ -420,7 +424,7 @@ function renderVisual(){renderViews();renderStage();}
 /* ---------- stepper + card ---------- */
 function renderStepper(){
   const p=P();
-  const L=[[2,'1. Because','Before reflexes',p.s2done,true],[3,'2. Baroreceptor reflex','Reflex active',p.s3done,p.s2done]];
+  const L=[[2,'1. Because','Before reflexes',p.s2done,true],[3,'2. Baroreceptor reflex','Reflex active',p.s3done,p.s2done],[4,'References','Sources',false,true]];
   $('stepper').innerHTML=L.map(([i,a,b,d,av])=>`<button type="button" class="sbtn ${d?'done':''}" data-i="${i}" ${step===i?'aria-current="step"':''} ${av?'':'disabled'}><b>${a}</b>${b}</button>`).join('');
   $('stepper').querySelectorAll('.sbtn').forEach(b=>b.onclick=()=>{step=+b.dataset.i;view=progView();renderVisual();renderRight();});
 }
@@ -486,6 +490,20 @@ function renderRight(){
     else{const ks=keys(s.f3),n=ks.filter(k=>accept(s.a3[k],p.p3[k])).length;
       h+=`<div class="fb ${n===ks.length?'ok':'part'}"><b>${n} of ${ks.length} correct.</b><span class="chainline">${s.chain3}</span>${LEGEND}</div><div class="fb take"><b>Integration point.</b> ${s.take}</div>
         <div class="row"><button class="go" id="next" type="button">${prog[cur==='blood'?'vaso':'blood'].s3done?'Both cases done':'Now try '+SC[cur==='blood'?'vaso':'blood'].name+' →'}</button></div>`;}
+  }
+  if(step===4){
+    const L=(u,t)=>`<a href="${u}" target="_blank" rel="noopener">${t}</a>`;
+    h=`<h2>References</h2><p class="q">Sources for the physiology and clinical points in both cases.</p>
+    <ol class="refs">
+      <li>Klabunde RE. ${L('https://cvphysiology.com/blood-pressure/bp031','Hemorrhagic shock')}. <i>Cardiovascular Physiology Concepts</i> (cvphysiology.com). Fall in central venous pressure and filling, baroreflex and humoral responses, beds that constrict, capillary fluid reabsorption.</li>
+      <li>Klabunde RE. ${L('https://cvphysiology.com/cardiac-function/cf008','Effects of afterload on ventricular function')}. <i>Cardiovascular Physiology Concepts</i>. Lower afterload raises stroke volume and lowers end-systolic volume.</li>
+      <li>Klabunde RE. ${L('https://cvphysiology.com/cardiac-function/cf027','Cardiac and systemic function curves: changes in systemic vascular resistance')}. <i>Cardiovascular Physiology Concepts</i>. Lower SVR raises cardiac output and venous return.</li>
+      <li>Klabunde RE. ${L('https://cvpharmacology.com/vasodilator/vasodilators','Vasodilator drugs')}. <i>Cardiovascular Pharmacology Concepts</i> (cvpharmacology.com). Arterial dilators lower SVR and arterial pressure, raise cardiac output, and trigger reflex tachycardia.</li>
+      <li>${L('https://www.openanesthesia.org/keywords/hydralazine','Hydralazine')}. OpenAnesthesia. Direct arteriolar dilator; reflex tachycardia, flushing.</li>
+      <li>American College of Surgeons Committee on Trauma. <i>Advanced Trauma Life Support (ATLS) Student Course Manual</i>, 10th ed. Chicago: ACS; 2018. Classes of hemorrhage (class II, 15–30% loss: tachycardia with normal blood pressure).</li>
+      <li>Klabunde RE. <i>Cardiovascular Physiology Concepts</i>, 3rd ed. Philadelphia: Wolters Kluwer; 2021.</li>
+    </ol>
+    <p class="note">The numbers on the diagram come from a simple teaching model (SV = contractility × Frank-Starling curve; CO = HR × SV; MAP ≈ CO × SVR). They show direction and relative size, not clinical values.</p>`;
   }
   if(step<=3) h+=`<div class="row" style="justify-content:flex-end;margin-top:.9rem"><button class="link" id="rstep" type="button">↺ Reset this step</button></div>`;
   $('card').innerHTML=h;
