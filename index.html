@@ -312,7 +312,7 @@ const SC={
   q1:'What is the primary vascular response?', site:'arterioles', change:'artDil', partial:{venodil:'The veins are not the target here. The defining change is in the resistance vessels.'},
   fb1:'Arteriolar resistance ↓ → SVR ↓.',
   pre:{edv:116,c:1.15,hr:72,svr:11.5,skin:'warm'}, comp:{edv:118,c:1.22,hr:84,svr:12.0,skin:'warm'},
-  a2:{vr:['s','u'],edv:['d','s'],hr:'s',sv:'u',co:'u',svr:'d',map:'d',skin:'u'}, fs:['shift'],
+  a2:{vr:'s',edv:'s',hr:'s',sv:'u',co:'u',svr:'d',map:'d',skin:'u'}, fs:['shift'],
   n2:{vr:'VR = CO at steady state; with veins unaffected, it holds or rises a little.',edv:'Unchanged at first; can rise a little as more blood reaches the veins.',sv:'SV holds (filling unchanged).',co:'Unchanged, or slightly higher.'},
   chain2:'Arteriolar resistance ↓ → SVR ↓ → afterload ↓ → SV ↑ → CO ↑; skin and tissue flow ↑ (warm, red); MAP ↓ because SVR falls more than CO rises (MAP ≈ CO × SVR)',
   a3:{firing:'d',symp:'u',vagal:'d',hr:'u',contr:'u',ven:'u',art:'u',co:'u',map:'u'}, n3:{art:'In beds the drug has not fully relaxed.'},
@@ -329,12 +329,12 @@ SC.blood.f2={start:'Blood volume ↓',tiers:[['vr'],['edv'],['sv'],['co'],['map'
 SC.vaso.f2={start:'Arteriolar dilation',tiers:[['svr'],['sv','skin'],['co'],['map']],side:['vr','edv','hr']};
 SC.blood.f3=SC.vaso.f3={start:'MAP ↓ (from step 1)',tiers:[['firing'],['symp','vagal'],['hr','contr','ven','art'],['co'],['map']],side:[]};
 SC.blood.w2={vr:'Less blood volume → central venous pressure ↓ → less blood returns to the heart.',edv:'Less venous return → less filling.',sv:'Less filling → a lower point on the same Frank-Starling curve → SV ↓.',co:'CO = HR × SV: HR is unchanged and SV ↓.',map:'MAP ≈ CO × SVR: SVR is unchanged and CO ↓.',skin:'Flow = ΔP/R: MAP has fallen while skin resistance is unchanged, so skin flow falls.',hr:'Unchanged until the reflex acts.',svr:'The arterioles are not the primary change, and the reflex has not acted yet, so SVR is unchanged.'};
-SC.vaso.w2={svr:'Arterioles dilate → resistance ↓ → SVR ↓.',sv:'Lower SVR means lower afterload: the ventricle ejects more each beat, so SV ↑ (end-systolic volume ↓).',skin:'Skin arterioles dilate → resistance ↓ → skin flow ↑ (warm, red).',co:'CO = HR × SV: HR is unchanged and SV ↑, so CO ↑. CO does not fall here because the veins are not affected.',map:'MAP ≈ CO × SVR: SVR falls more than CO rises, so MAP ↓.',vr:'Lower arterial pressure shifts blood toward the veins, so venous return holds or rises a little (VR = CO at steady state).',edv:'With more blood ejected each beat, less is left in the ventricle, so filling falls slightly or holds.',hr:'Unchanged until the reflex acts.'};
+SC.vaso.w2={svr:'Arterioles dilate → resistance ↓ → SVR ↓.',sv:'Lower SVR means lower afterload: the ventricle ejects more each beat, so SV ↑ (end-systolic volume ↓).',skin:'Skin arterioles dilate → resistance ↓ → skin flow ↑ (warm, red).',co:'CO = HR × SV: HR is unchanged and SV ↑, so CO ↑. CO does not fall here because the veins are not affected.',map:'MAP ≈ CO × SVR: SVR falls more than CO rises, so MAP ↓.',vr:'On the first beat venous return has not changed yet; over the next few beats lower arterial pressure shifts blood toward the veins, so it holds or rises a little (VR = CO at steady state).',edv:'Filling has not changed yet on this first beat; it can drift down slightly over the next few beats as the ventricle empties more.',hr:'Unchanged until the reflex acts.'};
 const W3={firing:'Lower MAP → less stretch of the carotid sinus and aortic arch → baroreceptor firing ↓.',symp:'Less firing → the medulla increases sympathetic outflow.',vagal:'Less firing → vagal outflow to the SA node ↓.',hr:'Sympathetic ↑ and vagal ↓ at the SA node → HR ↑.',contr:'Sympathetic ↑ (β1) → contractility ↑.',co:'CO = HR × SV: HR ↑, and contractility ↑ with venoconstriction raises SV.'};
 SC.blood.w3={...W3,ven:'Venoconstriction pushes reservoir blood toward the heart, so filling rises again.',art:'Skin, gut, kidney and resting skeletal muscle arterioles constrict (SVR ↑); brain and heart are spared.',map:'MAP ≈ CO × SVR: both rise, so MAP returns near normal.'};
 SC.vaso.w3={...W3,ven:'Venoconstriction pushes reservoir blood toward the heart.',art:'Arteriolar tone ↑ in beds the drug has not fully relaxed (SVR partly restored).',map:'CO ↑ and SVR partly ↑ → MAP rises, but stays below normal.'};
 SC.blood.fsAns=['along-down']; SC.blood.fsNote='Filling fell and contractility did not change, so X′ slides down the same curve.';
-SC.vaso.fsAns=['shift-up']; SC.vaso.fsNote='Afterload ↓ lets the ventricle eject more at the same (or slightly lower) filling, so X′ moves up onto a higher curve.'; SC.vaso.fsCurve=[[1.15,'afterload ↓']];
+SC.blood.useFS=true; SC.vaso.useFS=false; SC.blood.snap='the first beat or two after the blood is lost'; SC.vaso.snap='the very first beat after the arterioles dilate'; SC.vaso.fsAns=['shift-up']; SC.vaso.fsNote='Afterload ↓ lets the ventricle eject more at the same (or slightly lower) filling, so X′ moves up onto a higher curve.'; SC.vaso.fsCurve=[[1.15,'afterload ↓']];
 SC.blood.fb1tag='A1'; SC.vaso.fb1tag='A3';
 SC.blood.debrief='MAP is back near normal, but CO and skin flow are still low. A normal MAP does not mean normal tissue perfusion.';
 SC.vaso.debrief='Tissue and skin flow are high, but MAP is still below normal. The reflex cannot fully fix the variable that failed (SVR), so it leans on CO.';
@@ -445,7 +445,7 @@ const LIMIT=10*60*1000; let t0=null, tick=null;
 const expired=()=>t0!==null&&Date.now()-t0>=LIMIT;
 function startClock(){if(t0!==null)return;t0=Date.now();tick=setInterval(renderScore,1000);}
 function record(st,k,ok){const p=P();p.meta[st+':'+k]=expired()?'late':ok?'ok':'no';}
-const caseTotal=k=>keys(SC[k].f2).length+1+keys(SC[k].f3).length;
+const caseTotal=k=>keys(SC[k].f2).length+(SC[k].useFS?1:0)+keys(SC[k].f3).length;
 const caseScore=k=>Object.values(prog[k].meta).filter(v=>v==='ok').length;
 function renderScore(){
   const left=t0===null?LIMIT:Math.max(0,LIMIT-(Date.now()-t0)), m=Math.floor(left/60000), sec=Math.floor(left%60000/1000);
@@ -475,15 +475,15 @@ function renderRight(){
     const pts=[{n:'X',...B,col:'var(--curve0)'}];
     if(p.fsPt) pts.push({n:sd?'yours':'X′',edv:p.fsPt.edv,sv:p.fsPt.sv,col:'var(--pred)',below:true,ghost:sd});
     if(sd) pts.push({n:'X′',edv:s.P.edv,sv:s.P.sv,col:'var(--ok)',right:true});
-    h=`<h2>What happens because of it?</h2><p class="q">Snapshot: the first heartbeat or two after the change, before the baroreceptor reflex has time to respond. Follow the chain in order and mark each change.</p>`+
+    h=`<h2>What happens because of it?</h2><p class="q">Snapshot: ${s.snap}, before the baroreceptor reflex has time to respond. Follow the chain in order and mark each change.</p>`+
       flowHTML(s.f2,p.p2,s.a2,s.w2,'Before reflexes: did these change?',p.s2done,
-      `<div class="fsrow"><svg class="fs mini${sd?'':' tap'}" id="fsTap" viewBox="0 0 ${FW} ${FH}" role="img" aria-label="Tap to place X prime on the Frank-Starling plot">${fsSVG(pts,sd&&s.fsCurve?s.fsCurve:[])}</svg>
+      s.useFS?`<div class="fsrow"><svg class="fs mini${sd?'':' tap'}" id="fsTap" viewBox="0 0 ${FW} ${FH}" role="img" aria-label="Tap to place X prime on the Frank-Starling plot">${fsSVG(pts,sd&&s.fsCurve?s.fsCurve:[])}</svg>
        <div class="fsq"><div class="lab">Frank-Starling: tap the plot to place X′</div>
         <div>${p.fsPt?`You placed X′ <b>${FSDESC[cls]}</b>.`:'Where does the heart operate now, before any reflex?'}</div>
-        ${sd?`<div class="fb ${fsOk?'ok':'no'}" style="margin-top:.5rem">${fsOk?'Correct.':'Not quite.'} ${s.fsNote} ${tagS('A1')} ${tagS('A2')}</div>`:''}</div></div>`);
-    if(!p.s2done){const full=keys(s.f2).every(k=>p.p2[k])&&p.fsPt;h+=`<div class="row"><button class="go" id="sub" type="button" ${full?'':'disabled'} title="${full?'':'Answer every item and place X′ first'}">Next: check answers →</button><button class="link" id="rev" type="button">Reveal</button></div>`;}
-    else{const ks=keys(s.f2),n=ks.filter(k=>accept(s.a2[k],p.p2[k])).length+(fsOk?1:0);
-      h+=`<div class="fb ${n===ks.length+1?'ok':'part'}"><b>${n} of ${ks.length+1} correct.</b><span class="chainline">${s.chain2}</span>${LEGEND}</div><div class="row"><button class="go" id="next" type="button">Next: baroreceptor reflex →</button></div>`;}
+        ${sd?`<div class="fb ${fsOk?'ok':'no'}" style="margin-top:.5rem">${fsOk?'Correct.':'Not quite.'} ${s.fsNote} ${tagS('A1')} ${tagS('A2')}</div>`:''}</div></div>`:'');
+    if(!p.s2done){const full=keys(s.f2).every(k=>p.p2[k])&&(!s.useFS||p.fsPt);h+=`<div class="row"><button class="go" id="sub" type="button" ${full?'':'disabled'} title="${full?'':'Answer every item and place X′ first'}">Next: check answers →</button><button class="link" id="rev" type="button">Reveal</button></div>`;}
+    else{const ks=keys(s.f2),fsN=s.useFS?1:0,n=ks.filter(k=>accept(s.a2[k],p.p2[k])).length+(s.useFS&&fsOk?1:0);
+      h+=`<div class="fb ${n===ks.length+fsN?'ok':'part'}"><b>${n} of ${ks.length+fsN} correct.</b><span class="chainline">${s.chain2}</span>${LEGEND}</div><div class="row"><button class="go" id="next" type="button">Next: baroreceptor reflex →</button></div>`;}
   } else if(step===3){
     h=`<h2>Baroreceptor reflex</h2><p class="q">MAP has fallen, and within seconds the baroreceptor reflex responds. Follow the reflex in order and mark each change, relative to the moment before the reflex.</p>`+flowHTML(s.f3,p.p3,s.a3,s.w3,'',p.s3done);
     if(!p.s3done){const full=keys(s.f3).every(k=>p.p3[k]);h+=`<div class="row"><button class="go" id="sub" type="button" ${full?'':'disabled'} title="${full?'':'Answer every item first'}">Next: check answers →</button><button class="link" id="rev" type="button">Reveal</button></div>`;}
@@ -527,18 +527,18 @@ function resetStep(n){const p=P();
   p.p3={};p.r3={};p.s3done=false;Object.keys(p.meta).filter(x=>x[0]==='3').forEach(x=>delete p.meta[x]);
   step=n; view=progView(); renderAll();}
 function revealFill(k){const s=SC[k],p=prog[k];
-  keys(s.f2).forEach(q=>{if(!p.p2[q]){p.p2[q]=first(s.a2[q]);p.meta['2:'+q]='rev';}});if(!p.fsPt){p.fsPt={edv:s.P.edv,sv:s.P.sv};p.meta['2:fs']='rev';}p.s2done=true;
+  keys(s.f2).forEach(q=>{if(!p.p2[q]){p.p2[q]=first(s.a2[q]);p.meta['2:'+q]='rev';}});if(s.useFS&&!p.fsPt){p.fsPt={edv:s.P.edv,sv:s.P.sv};p.meta['2:fs']='rev';}p.s2done=true;
   keys(s.f3).forEach(q=>{if(!p.p3[q]){p.p3[q]=first(s.a3[q]);p.meta['3:'+q]='rev';}});p.s3done=true;}
 function submit(){const s=S(),p=P();
-  if(step===2){keys(s.f2).forEach(k=>{if(p.meta['2:'+k]!=='rev')record(2,k,accept(s.a2[k],p.p2[k]));});if(p.meta['2:fs']!=='rev')record(2,'fs',s.fsAns.includes(classify(p.fsPt)));}
+  if(step===2){keys(s.f2).forEach(k=>{if(p.meta['2:'+k]!=='rev')record(2,k,accept(s.a2[k],p.p2[k]));});if(s.useFS&&p.meta['2:fs']!=='rev')record(2,'fs',s.fsAns.includes(classify(p.fsPt)));}
   else keys(s.f3).forEach(k=>{if(p.meta['3:'+k]!=='rev')record(3,k,accept(s.a3[k],p.p3[k]));});
   checkDone();}
 function checkDone(){const s=S(),p=P();
-  if(step===2&&!p.s2done&&keys(s.f2).every(k=>p.p2[k])&&p.fsPt){p.s2done=true;view='pre';}
+  if(step===2&&!p.s2done&&keys(s.f2).every(k=>p.p2[k])&&(!s.useFS||p.fsPt)){p.s2done=true;view='pre';}
   if(step===3&&!p.s3done&&keys(s.f3).every(k=>p.p3[k])){p.s3done=true;view='comp';}
   renderAll();}
 function finish(reveal){const s=S(),p=P();
-  if(step===2){keys(s.f2).forEach(k=>{if(!p.p2[k]){p.p2[k]=first(s.a2[k]);p.meta['2:'+k]='rev';}});if(!p.fsPt){p.fsPt={edv:s.P.edv,sv:s.P.sv};p.meta['2:fs']='rev';}}
+  if(step===2){keys(s.f2).forEach(k=>{if(!p.p2[k]){p.p2[k]=first(s.a2[k]);p.meta['2:'+k]='rev';}});if(s.useFS&&!p.fsPt){p.fsPt={edv:s.P.edv,sv:s.P.sv};p.meta['2:fs']='rev';}}
   else keys(s.f3).forEach(k=>{if(!p.p3[k]){p.p3[k]=first(s.a3[k]);p.meta['3:'+k]='rev';}});
   checkDone();}
 function choose1(k){const s=S(),p=P();if(k===s.change){p.s1done=true;p.s1=null;}else p.s1={k,r:k in s.partial?'part':'no'};renderAll();}
