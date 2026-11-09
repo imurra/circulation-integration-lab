@@ -225,6 +225,10 @@ table.db{border-collapse:collapse;width:100%;font-size:.92rem}
 .credit{max-width:1400px;margin:1.2rem auto 1.5rem;font-size:.85rem;color:var(--muted);line-height:1.45;border-top:1px solid var(--line);padding-top:.8rem}
 .credit p{margin:.15rem 0}
 .credit a{color:inherit;text-decoration:underline}
+
+.abbr{margin:1.1rem 0 0;padding-top:.6rem;border-top:1px solid var(--line);font-size:.82rem;color:var(--muted);line-height:1.5;display:flex;flex-wrap:wrap;gap:.15rem .9rem}
+.abbr b{color:var(--ink);font-weight:700}
+.row.foot{justify-content:space-between;margin-top:.5rem}
 </style>
 
 <header class="band pad"><div class="bandrow">
@@ -483,12 +487,12 @@ function renderRight(){
        <div class="fsq"><div class="lab">Frank-Starling: tap the plot to place X′</div>
         <div>${p.fsPt?`You placed X′ <b>${FSDESC[cls]}</b>.`:'Where does the heart operate now, before any reflex?'}</div>
         ${sd?`<div class="fb ${fsOk?'ok':'no'}" style="margin-top:.5rem">${fsOk?'Correct.':'Not quite.'} ${s.fsNote} ${tagS('A1')} ${tagS('A2')}</div>`:''}</div></div>`:'');
-    if(!p.s2done){const full=keys(s.f2).every(k=>p.p2[k])&&(!s.useFS||p.fsPt);h+=`<div class="row"><button class="go" id="sub" type="button" ${full?'':'disabled'} title="${full?'':'Answer every item and place X′ first'}">Next: check answers →</button><button class="link" id="rev" type="button">Reveal</button></div>`;}
+    if(!p.s2done){const full=keys(s.f2).every(k=>p.p2[k])&&(!s.useFS||p.fsPt);h+=`<div class="row"><button class="go" id="sub" type="button" ${full?'':'disabled'} title="${full?'':'Answer every item and place X′ first'}">Next: check answers →</button></div>`;}
     else{const ks=keys(s.f2),fsN=s.useFS?1:0,n=ks.filter(k=>accept(s.a2[k],p.p2[k])).length+(s.useFS&&fsOk?1:0);
       h+=`<div class="fb ${n===ks.length+fsN?'ok':'part'}"><b>${n} of ${ks.length+fsN} correct.</b><span class="chainline">${s.chain2}</span>${LEGEND}</div><div class="row"><button class="go" id="next" type="button">Next: baroreceptor reflex →</button></div>`;}
   } else if(step===3){
     h=`<h2>Baroreceptor reflex</h2><p class="q">MAP has fallen, and within seconds the baroreceptor reflex responds. Follow the reflex in order and mark each change, relative to the moment before the reflex.</p>`+flowHTML(s.f3,p.p3,s.a3,s.w3,'',p.s3done);
-    if(!p.s3done){const full=keys(s.f3).every(k=>p.p3[k]);h+=`<div class="row"><button class="go" id="sub" type="button" ${full?'':'disabled'} title="${full?'':'Answer every item first'}">Next: check answers →</button><button class="link" id="rev" type="button">Reveal</button></div>`;}
+    if(!p.s3done){const full=keys(s.f3).every(k=>p.p3[k]);h+=`<div class="row"><button class="go" id="sub" type="button" ${full?'':'disabled'} title="${full?'':'Answer every item first'}">Next: check answers →</button></div>`;}
     else{const ks=keys(s.f3),n=ks.filter(k=>accept(s.a3[k],p.p3[k])).length;
       h+=`<div class="fb ${n===ks.length?'ok':'part'}"><b>${n} of ${ks.length} correct.</b><span class="chainline">${s.chain3}</span>${LEGEND}</div><div class="fb take"><b>Integration point.</b> ${s.take}</div>
         <div class="row"><button class="go" id="next" type="button">${prog[cur==='blood'?'vaso':'blood'].s3done?'Both cases done':'Now try '+SC[cur==='blood'?'vaso':'blood'].name+' →'}</button></div>`;}
@@ -505,7 +509,12 @@ function renderRight(){
     </ol>
     <p class="note">The numbers on the diagram come from a simple teaching model (SV = contractility × Frank-Starling curve; CO = HR × SV; MAP ≈ CO × SVR). They show direction and relative size, not clinical values.</p>`;
   }
-  if(step<=3) h+=`<div class="row" style="justify-content:flex-end;margin-top:.9rem"><button class="link" id="rstep" type="button">↺ Reset this step</button></div>`;
+  if(step<=3){
+    const AB=[['MAP','mean arterial pressure'],['CO','cardiac output'],['SV','stroke volume'],['HR','heart rate'],['SVR','systemic vascular resistance'],['VR','venous return'],['EDV','end-diastolic volume (filling)']];
+    if(step===3) AB.push(['RAAS','renin–angiotensin–aldosterone system'],['ADH','antidiuretic hormone']);
+    const open=step===2?!p.s2done:!p.s3done;
+    h+=`<p class="abbr">${AB.map(([a,b])=>`<span><b>${a}</b> ${b}</span>`).join('')}</p>
+      <div class="row foot">${open?'<button class="link" id="rev" type="button">Reveal answers (not scored)</button>':'<span></span>'}<button class="link" id="rstep" type="button">↺ Reset this step</button></div>`;}
   $('card').innerHTML=h;
   const rs=$('rstep'); if(rs) rs.onclick=()=>resetStep(step);
   const c=$('card');
