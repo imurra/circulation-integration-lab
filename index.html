@@ -221,6 +221,10 @@ table.db{border-collapse:collapse;width:100%;font-size:.92rem}
   .card .q{margin-bottom:.5rem}
   .flowc > .tier:has(> .node:nth-child(4)) > .node{flex:0 1 calc(50% - .25rem);max-width:none}
 }
+
+.credit{max-width:1400px;margin:1.2rem auto 1.5rem;font-size:.85rem;color:var(--muted);line-height:1.45;border-top:1px solid var(--line);padding-top:.8rem}
+.credit p{margin:.15rem 0}
+.credit a{color:inherit;text-decoration:underline}
 </style>
 
 <header class="band pad"><div class="bandrow">
@@ -270,6 +274,11 @@ table.db{border-collapse:collapse;width:100%;font-size:.92rem}
     </section>
   </div>
 </main>
+<footer class="credit pad">
+  <p><b>Created by Ian V.J. Murray, PhD, MHPE</b></p>
+  <p>&copy; 2026 Ian V.J. Murray. Licensed under <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener license">CC BY-NC 4.0</a>: free to share and adapt for non-commercial use, with attribution.</p>
+  <p>Built with the assistance of Claude (Anthropic).</p>
+</footer>
 
 <script>
 (function(){
@@ -290,36 +299,32 @@ const SITE={veins:'Veins',heart:'Heart',arterioles:'Arterioles'};
 
 const SC={
  blood:{name:'Blood loss',
-  stem:'<b>Case.</b> A 34-year-old is brought in 40 minutes after a motorcycle crash with a deep thigh laceration. About 20% of circulating blood volume has been lost.',
+  stem:'<b>Case.</b> A 34-year-old is brought in 40 minutes after a motorcycle crash with a deep thigh laceration. About 20% of circulating blood volume has been lost. Step 1 freezes the moment the blood was lost; step 2 shows how the body has responded since.',
   start:'Starting change: <b>blood volume ↓</b>. Most of the blood volume sits in the veins, so the venous reservoir empties first.',
   q1:'What is the primary disturbance?', site:'veins', change:'volloss', partial:{venodil:'The veins hold less blood here, but not because they relaxed. What was lost?'},
   fb1:'Blood volume falls. Most of the blood volume sits in the veins, so the venous reservoir empties first.',
   pre:{edv:80,c:1,hr:72,svr:17.86,skin:'dim'}, comp:{edv:86,c:1.03,hr:96,svr:19.5,skin:'pale'},
   a2:{vr:'d',edv:'d',hr:'s',sv:'d',co:'d',svr:'s',map:'d',tissue:'d'}, fs:['along'],
-  n2:{hr:'Unchanged until the reflex acts.',skin:'Flow = ΔP/R: MAP has fallen by about 40% while skin resistance is unchanged, so skin flow falls in proportion.'},
   chain2:'Blood volume ↓ → central venous pressure ↓ → venous return ↓ → filling (EDV) ↓ → lower point on the same Frank-Starling curve → SV ↓ → CO ↓ → MAP ↓ → tissue flow ↓',
-  a3:{firing:'d',symp:'u',vagal:'d',hr:'u',contr:'u',ven:'u',art:'u',co:'u',map:'u'}, n3:{art:'Skin, gut, kidney and resting skeletal muscle arterioles constrict; brain and heart are spared.',ven:'Venoconstriction pushes reservoir blood toward the heart, so filling rises again.'},
+  a3:{firing:'d',symp:'u',vagal:'d',hr:'u',contr:'u',ven:'u',art:'u',co:'u',map:'u'},
   chain3:'MAP ↓ → less stretch → firing ↓ → sympathetic ↑, vagal ↓ → HR ↑, contractility ↑, venoconstriction, SVR ↑. Bonus (later in KIFS): angiotensin II and ADH also constrict arterioles directly; RAAS and ADH conserve Na⁺ and water in the kidney; thirst increases.',
-  take:'Compared with normal, CO is still low and SVR is high: in MAP ≈ CO × SVR, the raised SVR makes up for the low CO. Arteriolar constriction also lowers capillary pressure, so interstitial fluid moves into the capillaries (up to about 1 L/h) and partly refills blood volume; this fluid has no cells, so hematocrit falls. Bedside clues at this degree of loss: tachycardia with a normal blood pressure, narrowed pulse pressure, cool pale skin, delayed capillary refill, reduced urine output. A normal MAP does not prove normal tissue perfusion; if bleeding continues, MAP eventually falls.',
+  take:'Compared with normal, CO is still low and SVR is high: in MAP ≈ CO × SVR, the raised SVR makes up for the low CO. Arteriolar constriction also lowers capillary pressure, so interstitial fluid moves into the capillaries (up to about 1 L/h) and partly refills blood volume; this fluid has no cells, so hematocrit falls. Bedside clues at this degree of loss: normal blood pressure with a heart rate that is normal or raised, a narrowed pulse pressure, cool pale skin; urine output is usually still near normal. A normal MAP does not prove normal tissue perfusion; if bleeding continues, MAP eventually falls.',
   badges:{pre:{veins:'Blood volume ↓',heart:'Filling ↓',art:''},comp:{veins:'Venoconstriction',heart:'HR ↑ · contractility ↑',art:'Constricted · SVR ↑'}},
-  look:{pre:{vw:['empty',.5],va:'',aa:''},comp:{vw:['empty',.3],va:'in',aa:'in'}},
-  cmp:{vr:'↓ (VR = CO)',co:'↓',svr:'↑',map:'Near normal: high SVR offsets low CO',skin:'↓',app:'Cool, pale'}
+  look:{pre:{vw:['empty',.5],va:'',aa:''},comp:{vw:['empty',.3],va:'in',aa:'in'}}
  },
  vaso:{name:'Septic shock',
-  stem:'<b>Scenario.</b> A patient in septic shock has a cytokine storm that makes arterioles throughout the body dilate at once — distributive shock. We trace the arteriolar effect first.',
+  stem:'<b>Scenario.</b> A patient is in septic shock: inflammatory mediators (e.g., nitric oxide) make arterioles throughout the body dilate at once — distributive shock. We trace the arteriolar effect first.',
   start:'Starting change: <b>widespread arteriolar dilation → SVR ↓</b>.',
   q1:'What is the primary vascular response?', site:'arterioles', change:'artDil', partial:{venodil:'The veins are not the target here. The defining change is in the resistance vessels.'},
   fb1:'Arteriolar resistance ↓ → SVR ↓.',
-  pre:{edv:116,c:1.15,hr:72,svr:11.5,skin:'warm'}, comp:{edv:118,c:1.22,hr:84,svr:12.0,skin:'warm'},
-  a2:{vr:'s',edv:'s',hr:'s',svr:'d',map:'d',skin:'u'}, fs:['shift'],
-  n2:{vr:'VR = CO at steady state; with veins unaffected, it holds or rises a little.',edv:'Unchanged at first; can rise a little as more blood reaches the veins.',sv:'SV holds (filling unchanged).',co:'Unchanged, or slightly higher.'},
+  pre:{edv:120,c:1,hr:72,svr:11.5,skin:'warm'}, comp:{edv:118,c:1.22,hr:84,svr:12.0,skin:'warm'},
+  a2:{vr:'s',edv:'s',hr:'s',svr:'d',map:'d',skin:'u'}, 
   chain2:'Widespread arteriolar dilation → SVR ↓ → MAP ↓ (MAP ≈ CO × SVR); skin arterioles dilate → skin flow ↑, warm and flushed.',
-  a3:{firing:'d',symp:'u',vagal:'d',hr:'u',contr:'u',ven:'u',art:'u',co:'u',map:'u'}, n3:{art:'In beds the drug has not fully relaxed.'},
-  chain3:'MAP ↓ → firing ↓ → sympathetic ↑, vagal ↓ → HR ↑, contractility ↑, venous tone ↑, arteriolar tone ↑. Bonus (later in KIFS): RAAS activation causes Na⁺ and water retention over days.',
-  take:'SVR is the variable that failed, so the reflex can only partly restore MAP, mostly by raising CO. Skin stays warm and flushed. Blood loss is the mirror image: CO falls, SVR rises, skin goes cool and pale.',
+  a3:{firing:'d',symp:'u',vagal:'d',hr:'u',contr:'u',ven:'u',art:['u','s'],co:'u',map:'u'},
+  chain3:'MAP ↓ → firing ↓ → sympathetic ↑, vagal ↓ → HR ↑, contractility ↑, venous tone ↑, arteriolar tone ↑ (blunted). Bonus (later in KIFS): RAAS activation causes Na⁺ and water retention over days.',
+  take:'SVR is the variable that failed, so the reflex can only partly restore MAP, mostly by raising CO. Skin stays warm and flushed, but warm skin does not mean the organs are well perfused. Blood loss is the mirror image: CO falls, SVR rises, skin goes cool and pale.',
   badges:{pre:{veins:'',heart:'',art:'Dilated · SVR ↓'},comp:{veins:'Venous tone ↑',heart:'HR ↑ · contractility ↑',art:'Tone ↑ (partial)'}},
-  look:{pre:{vw:['',0],va:'',aa:'out'},comp:{vw:['',0],va:'in',aa:'out'}},
-  cmp:{vr:'↑ or ↔ (VR = CO)',co:'↑ or ↔',svr:'↓',map:'Partly restored, mainly by ↑ CO',skin:'↑',app:'Warm, flushed'}
+  look:{pre:{vw:['',0],va:'',aa:'out'},comp:{vw:['',0],va:'in',aa:'out'}}
  }
 };
 const ORDER=['blood','vaso'];
@@ -327,16 +332,14 @@ ORDER.forEach(k=>{SC[k].P=calc(SC[k].pre);SC[k].C=calc(SC[k].comp);});
 SC.blood.f2={start:'Blood volume ↓',tiers:[['vr'],['edv'],['sv'],['co'],['map'],['tissue']],side:['hr','svr']};
 SC.vaso.f2={start:'Widespread arteriolar dilation',tiers:[['svr'],['skin','map']],side:['vr','edv','hr']};
 SC.blood.f3=SC.vaso.f3={start:'MAP ↓ (from step 1)',tiers:[['firing'],['symp','vagal'],['hr','contr','ven','art'],['co'],['map']],side:[]};
-SC.blood.w2={vr:'Less blood volume → central venous pressure ↓ → less blood returns to the heart.',edv:'Less venous return → less filling.',sv:'Less filling → a lower point on the same Frank-Starling curve → SV ↓.',co:'CO = HR × SV: HR is unchanged and SV ↓.',map:'MAP ≈ CO × SVR: SVR is unchanged and CO ↓.',tissue:'MAP has fallen, so blood flow to the organs and tissues falls (Flow = ΔP/R). This fall in perfusion is what defines shock.',hr:'Unchanged until the reflex acts.',svr:'The arterioles are not the primary change, and the reflex has not acted yet, so SVR is unchanged.'};
+SC.blood.w2={vr:'Less blood volume → central venous pressure ↓ → less blood returns to the heart.',edv:'Less venous return → less filling.',sv:'Less filling → a lower point on the same Frank-Starling curve → SV ↓.',co:'CO = HR × SV: HR is unchanged and SV ↓.',map:'MAP ≈ CO × SVR: SVR is unchanged and CO ↓.',tissue:'MAP has fallen, so blood flow to the organs and tissues falls (Flow = ΔP/R), especially in beds that cannot autoregulate. This fall in perfusion is what defines shock.',hr:'Unchanged until the reflex acts.',svr:'The arterioles are not the primary change, and the reflex has not acted yet, so SVR is unchanged.'};
 SC.vaso.w2={svr:'Arterioles throughout the body dilate → resistance ↓ → SVR ↓.',skin:'Skin arterioles dilate → skin flow ↑: the skin is warm and flushed — classic "warm" septic shock.',map:'MAP ≈ CO × SVR: SVR falls sharply, so MAP ↓ even though the heart is still pumping.',vr:'On the first beat venous return has not changed yet — we are isolating the arteriolar change.',edv:'Filling has not changed yet on this first beat.',hr:'Unchanged until the reflex acts.'};
 const W3={firing:'Lower MAP → less stretch of the carotid sinus and aortic arch → baroreceptor firing ↓.',symp:'Less firing → the medulla increases sympathetic outflow.',vagal:'Less firing → vagal outflow to the SA node ↓.',hr:'Sympathetic ↑ and vagal ↓ at the SA node → HR ↑.',contr:'Sympathetic ↑ (β1) → contractility ↑.',co:'CO = HR × SV: HR ↑, and contractility ↑ with venoconstriction raises SV.'};
-SC.blood.w3={...W3,ven:'Venoconstriction pushes reservoir blood toward the heart, so filling rises again.',art:'Skin, gut, kidney and resting skeletal muscle arterioles constrict (SVR ↑); brain and heart are spared.',map:'MAP ≈ CO × SVR: both rise, so MAP returns near normal.'};
-SC.vaso.w3={...W3,ven:'Venoconstriction pushes reservoir blood toward the heart.',art:'Arteriolar tone ↑ in beds the drug has not fully relaxed (SVR partly restored).',map:'CO ↑ and SVR partly ↑ → MAP rises, but stays below normal.'};
+SC.blood.w3={...W3,firing:'Lower MAP → less stretch of the carotid sinus and aortic arch → baroreceptor firing ↓ (low-pressure receptors in the heart and lungs are also unloaded).',ven:'Venoconstriction pushes reservoir blood toward the heart, so filling rises again.',art:'Skin, gut, kidney and resting skeletal muscle arterioles constrict (SVR ↑); brain and heart are spared.',map:'MAP ≈ CO × SVR: both rise, so MAP returns near normal.'};
+SC.vaso.w3={...W3,ven:'Venoconstriction pushes reservoir blood toward the heart; in sepsis, venodilation and leaky capillaries make this rise only partial.',art:'Sympathetic drive to the arterioles rises, but inflammatory mediators (mainly nitric oxide) blunt their response, so SVR rises only a little and stays low.',co:'CO = HR × SV: HR ↑ and contractility ↑ raise CO, though in sepsis the rise is partial (the heart muscle can also be depressed).',map:'CO ↑ (with SVR only slightly ↑) → MAP rises, but stays below normal.'};
 SC.blood.fsAns=['along-down']; SC.blood.fsNote='Filling fell and contractility did not change, so X′ slides down the same curve.';
-SC.blood.useFS=true; SC.vaso.useFS=false; SC.blood.snap='the first beat or two after the blood is lost'; SC.vaso.snap='the very first beat after the arterioles dilate'; SC.vaso.fsAns=['shift-up']; SC.vaso.fsNote='Afterload ↓ lets the ventricle eject more at the same (or slightly lower) filling, so X′ moves up onto a higher curve.'; SC.vaso.fsCurve=[[1.15,'afterload ↓']];
+SC.blood.useFS=true; SC.vaso.useFS=false; SC.blood.snap='the first beat or two after the blood is lost'; SC.vaso.snap='the very first beat after the arterioles dilate';
 SC.blood.fb1tag='A1'; SC.vaso.fb1tag='A3';
-SC.blood.debrief='MAP is back near normal, but CO and skin flow are still low. A normal MAP does not mean normal tissue perfusion.';
-SC.vaso.debrief='Tissue and skin flow are high, but MAP is still below normal. The reflex cannot fully fix the variable that failed (SVR), so it leans on CO.';
 const TAGS={A1:'Activity 1 · veins control filling',A2:'Activity 2 · heart controls force',A3:'Activity 3 · arterioles control resistance',BR:'Baroreflex'};
 const TSHORT={A1:'Act 1',A2:'Act 2',A3:'Act 3',BR:'Reflex'};
 const tagS=t=>`<span class="tag" title="${TAGS[t]}">${TSHORT[t]}</span>`;
@@ -495,11 +498,9 @@ function renderRight(){
     h=`<h2>References</h2><p class="q">Sources for the physiology and clinical points in both cases.</p>
     <ol class="refs">
       <li>Klabunde RE. ${L('https://cvphysiology.com/blood-pressure/bp031','Hemorrhagic shock')}. <i>Cardiovascular Physiology Concepts</i> (cvphysiology.com). Fall in central venous pressure and filling, baroreflex and humoral responses, beds that constrict, capillary fluid reabsorption.</li>
-      <li>Klabunde RE. ${L('https://cvphysiology.com/cardiac-function/cf008','Effects of afterload on ventricular function')}. <i>Cardiovascular Physiology Concepts</i>. Lower afterload raises stroke volume and lowers end-systolic volume.</li>
-      <li>Klabunde RE. ${L('https://cvphysiology.com/cardiac-function/cf027','Cardiac and systemic function curves: changes in systemic vascular resistance')}. <i>Cardiovascular Physiology Concepts</i>. Lower SVR raises cardiac output and venous return.</li>
-      <li>Klabunde RE. ${L('https://cvpharmacology.com/vasodilator/vasodilators','Vasodilator drugs')}. <i>Cardiovascular Pharmacology Concepts</i> (cvpharmacology.com). Arterial dilators lower SVR and arterial pressure, raise cardiac output, and trigger reflex tachycardia.</li>
-      <li>${L('https://www.ncbi.nlm.nih.gov/books/NBK430939/','Distributive shock')}. StatPearls (NCBI Bookshelf). Septic “warm” shock: widespread vasodilation → low SVR, warm flushed skin, low MAP.</li>
-      <li>American College of Surgeons Committee on Trauma. <i>Advanced Trauma Life Support (ATLS) Student Course Manual</i>, 10th ed. Chicago: ACS; 2018. Classes of hemorrhage (class II, 15–30% loss: tachycardia with normal blood pressure).</li>
+      <li>American College of Surgeons Committee on Trauma. <i>Advanced Trauma Life Support (ATLS) Student Course Manual</i>, 10th ed. Chicago: ACS; 2018. Classes of hemorrhage (class II, 15–30% loss: heart rate normal or raised, blood pressure normal, pulse pressure narrowed).</li>
+      <li>Mahapatra S, Heffner AC. ${L('https://www.ncbi.nlm.nih.gov/books/NBK430939/','Septic shock (sepsis)')}. <i>StatPearls</i> (NCBI Bookshelf). Septic shock: widespread vasodilation, low SVR, hypotension, inadequate tissue perfusion.</li>
+      <li>Landry DW, Oliver JA. ${L('https://doi.org/10.1056/NEJMra002709','The pathogenesis of vasodilatory shock')}. <i>N Engl J Med</i>. 2001;345(8):588–595. Why arterioles respond poorly to sympathetic drive in septic shock (nitric oxide, K-ATP channels, low vasopressin).</li>
       <li>Klabunde RE. <i>Cardiovascular Physiology Concepts</i>, 3rd ed. Philadelphia: Wolters Kluwer; 2021.</li>
     </ol>
     <p class="note">The numbers on the diagram come from a simple teaching model (SV = contractility × Frank-Starling curve; CO = HR × SV; MAP ≈ CO × SVR). They show direction and relative size, not clinical values.</p>`;

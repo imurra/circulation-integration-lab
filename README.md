@@ -16,3 +16,11 @@ A 10-minute clock (starts on the first answer) and a scorecard run across the to
 Values come from a simple teaching model (SV = contractility × Frank-Starling curve; CO = HR × SV; MAP ≈ CO × SVR) and show direction and relative size, not clinical numbers.
 
 Dr. Ian Murray · CC BY-NC-SA 4.0
+
+## Credits and license
+
+Created by Ian V.J. Murray, PhD, MHPE.
+
+© 2026 Ian V.J. Murray. Licensed under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/): free to share and adapt for non-commercial use, with attribution.
+
+Built with the assistance of Claude (Anthropic).
