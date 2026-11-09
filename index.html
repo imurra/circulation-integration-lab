@@ -60,9 +60,9 @@ h1{font-family:var(--display);font-weight:800;font-size:1.6rem;margin:0;line-hei
 .picking .hot:hover,.picking .hot:focus{fill:rgba(255,214,0,.2);stroke:#3f0538}
 .hot.chosen{stroke:#3f0538;stroke-dasharray:none;fill:rgba(255,214,0,.18)}
 .hot.right{stroke:#1d7a46;stroke-dasharray:none;fill:rgba(29,122,70,.12)}
-.flow{fill:none;stroke:#0e6f8f;stroke-width:10;stroke-linecap:round;stroke-dasharray:1 38;animation:flow var(--dur,6s) linear infinite}
+.flow{display:none}
 @keyframes flow{to{stroke-dashoffset:-390}}
-.pulse{transform-origin:595px 280px;animation:beat var(--beat,.83s) ease-out infinite}
+.pulse,#veinArrows,#artArrows{display:none}
 @keyframes beat{0%{transform:scale(1);opacity:var(--glow,.3)}25%{transform:scale(1.07);opacity:calc(var(--glow,.3) + .15)}100%{transform:scale(1);opacity:0}}
 @media (prefers-reduced-motion:reduce){.flow,.pulse{animation:none}}
 .stage{container-type:inline-size}
@@ -262,7 +262,6 @@ table.db{border-collapse:collapse;width:100%;font-size:.92rem}
         <span class="badge a" id="b-art" style="left:78%;top:69%" hidden></span>
       </div>
       <div class="capline"><span id="stateCap" class="cap"></span><span class="skinchip"><span id="skinChip" class="sw"></span><span id="skinChipTxt"></span></span></div>
-      <p class="note">Dots = flow around the loop (faster = higher CO); red glow = heartbeat (rate = HR).</p>
     </section>
 
     <section aria-label="Steps">
@@ -284,7 +283,7 @@ const OPTS={
   heart:[['inoUp','Contractility ↑ (+ inotropy)'],['inoDn','Contractility ↓ (− inotropy)'],['hrUp','Heart rate ↑']],
   arterioles:[['artDil','Arteriolar dilation: SVR ↓'],['artCon','Arteriolar constriction: SVR ↑']]
 };
-const P2=[['map','MAP'],['sv','Stroke volume'],['skin','Skin blood flow'],['vr','Venous return'],['co','Cardiac output'],['hr','Heart rate'],['edv','Filling (EDV)'],['svr','SVR']];
+const P2=[['map','MAP'],['sv','Stroke volume'],['skin','Skin blood flow'],['vr','Venous return'],['co','Cardiac output'],['hr','Heart rate'],['edv','Filling (EDV)'],['svr','SVR'],['tissue','Tissue blood flow']];
 const P3=[['hr','Heart rate'],['map','MAP'],['art','Arteriolar tone'],['firing','Baroreceptor firing'],['contr','Contractility'],['co','Cardiac output'],['vagal','Vagal outflow'],['ven','Venous tone'],['symp','Sympathetic outflow']];
 const FSO=[['along','Moves along the same curve'],['shift','Shifts to a new curve'],['none','Stays at the same point']];
 const SITE={veins:'Veins',heart:'Heart',arterioles:'Arterioles'};
@@ -296,7 +295,7 @@ const SC={
   q1:'What is the primary disturbance?', site:'veins', change:'volloss', partial:{venodil:'The veins hold less blood here, but not because they relaxed. What was lost?'},
   fb1:'Blood volume falls. Most of the blood volume sits in the veins, so the venous reservoir empties first.',
   pre:{edv:80,c:1,hr:72,svr:17.86,skin:'dim'}, comp:{edv:86,c:1.03,hr:96,svr:19.5,skin:'pale'},
-  a2:{vr:'d',edv:'d',hr:'s',sv:'d',co:'d',svr:'s',map:'d',skin:'d'}, fs:['along'],
+  a2:{vr:'d',edv:'d',hr:'s',sv:'d',co:'d',svr:'s',map:'d',tissue:'d'}, fs:['along'],
   n2:{hr:'Unchanged until the reflex acts.',skin:'Flow = ΔP/R: MAP has fallen by about 40% while skin resistance is unchanged, so skin flow falls in proportion.'},
   chain2:'Blood volume ↓ → central venous pressure ↓ → venous return ↓ → filling (EDV) ↓ → lower point on the same Frank-Starling curve → SV ↓ → CO ↓ → MAP ↓ → tissue flow ↓',
   a3:{firing:'d',symp:'u',vagal:'d',hr:'u',contr:'u',ven:'u',art:'u',co:'u',map:'u'}, n3:{art:'Skin, gut, kidney and resting skeletal muscle arterioles constrict; brain and heart are spared.',ven:'Venoconstriction pushes reservoir blood toward the heart, so filling rises again.'},
@@ -306,30 +305,30 @@ const SC={
   look:{pre:{vw:['empty',.5],va:'',aa:''},comp:{vw:['empty',.3],va:'in',aa:'in'}},
   cmp:{vr:'↓ (VR = CO)',co:'↓',svr:'↑',map:'Near normal: high SVR offsets low CO',skin:'↓',app:'Cool, pale'}
  },
- vaso:{name:'Widespread arteriodilation',
-  stem:'<b>Scenario.</b> Arterioles throughout the body dilate at once, for example after an IV arteriolar dilator such as hydralazine. Veins are not directly affected. (The MAP fall is exaggerated here so the reflex is easy to see.)',
-  start:'Starting change: <b>arteriolar dilation → SVR ↓</b>.',
+ vaso:{name:'Septic shock',
+  stem:'<b>Scenario.</b> A patient in septic shock has a cytokine storm that makes arterioles throughout the body dilate at once — distributive shock. We trace the arteriolar effect first.',
+  start:'Starting change: <b>widespread arteriolar dilation → SVR ↓</b>.',
   q1:'What is the primary vascular response?', site:'arterioles', change:'artDil', partial:{venodil:'The veins are not the target here. The defining change is in the resistance vessels.'},
   fb1:'Arteriolar resistance ↓ → SVR ↓.',
   pre:{edv:116,c:1.15,hr:72,svr:11.5,skin:'warm'}, comp:{edv:118,c:1.22,hr:84,svr:12.0,skin:'warm'},
-  a2:{vr:'s',edv:'s',hr:'s',sv:'u',co:'u',svr:'d',map:'d',skin:'u'}, fs:['shift'],
+  a2:{vr:'s',edv:'s',hr:'s',svr:'d',map:'d',skin:'u'}, fs:['shift'],
   n2:{vr:'VR = CO at steady state; with veins unaffected, it holds or rises a little.',edv:'Unchanged at first; can rise a little as more blood reaches the veins.',sv:'SV holds (filling unchanged).',co:'Unchanged, or slightly higher.'},
-  chain2:'Arteriolar resistance ↓ → SVR ↓ → afterload ↓ → SV ↑ → CO ↑; skin and tissue flow ↑ (warm, red); MAP ↓ because SVR falls more than CO rises (MAP ≈ CO × SVR)',
+  chain2:'Widespread arteriolar dilation → SVR ↓ → MAP ↓ (MAP ≈ CO × SVR); skin arterioles dilate → skin flow ↑, warm and flushed.',
   a3:{firing:'d',symp:'u',vagal:'d',hr:'u',contr:'u',ven:'u',art:'u',co:'u',map:'u'}, n3:{art:'In beds the drug has not fully relaxed.'},
   chain3:'MAP ↓ → firing ↓ → sympathetic ↑, vagal ↓ → HR ↑, contractility ↑, venous tone ↑, arteriolar tone ↑. Bonus (later in KIFS): RAAS activation causes Na⁺ and water retention over days.',
   take:'SVR is the variable that failed, so the reflex can only partly restore MAP, mostly by raising CO. Skin stays warm and flushed. Blood loss is the mirror image: CO falls, SVR rises, skin goes cool and pale.',
-  badges:{pre:{veins:'',heart:'SV ↑ (afterload ↓)',art:'Dilated · SVR ↓'},comp:{veins:'Venous tone ↑',heart:'HR ↑ · contractility ↑',art:'Tone ↑ (partial)'}},
+  badges:{pre:{veins:'',heart:'',art:'Dilated · SVR ↓'},comp:{veins:'Venous tone ↑',heart:'HR ↑ · contractility ↑',art:'Tone ↑ (partial)'}},
   look:{pre:{vw:['',0],va:'',aa:'out'},comp:{vw:['',0],va:'in',aa:'out'}},
   cmp:{vr:'↑ or ↔ (VR = CO)',co:'↑ or ↔',svr:'↓',map:'Partly restored, mainly by ↑ CO',skin:'↑',app:'Warm, flushed'}
  }
 };
 const ORDER=['blood','vaso'];
 ORDER.forEach(k=>{SC[k].P=calc(SC[k].pre);SC[k].C=calc(SC[k].comp);});
-SC.blood.f2={start:'Blood volume ↓',tiers:[['vr'],['edv'],['sv'],['co'],['map'],['skin']],side:['hr','svr']};
-SC.vaso.f2={start:'Arteriolar dilation',tiers:[['svr'],['sv','skin'],['co'],['map']],side:['vr','edv','hr']};
+SC.blood.f2={start:'Blood volume ↓',tiers:[['vr'],['edv'],['sv'],['co'],['map'],['tissue']],side:['hr','svr']};
+SC.vaso.f2={start:'Widespread arteriolar dilation',tiers:[['svr'],['skin','map']],side:['vr','edv','hr']};
 SC.blood.f3=SC.vaso.f3={start:'MAP ↓ (from step 1)',tiers:[['firing'],['symp','vagal'],['hr','contr','ven','art'],['co'],['map']],side:[]};
-SC.blood.w2={vr:'Less blood volume → central venous pressure ↓ → less blood returns to the heart.',edv:'Less venous return → less filling.',sv:'Less filling → a lower point on the same Frank-Starling curve → SV ↓.',co:'CO = HR × SV: HR is unchanged and SV ↓.',map:'MAP ≈ CO × SVR: SVR is unchanged and CO ↓.',skin:'Flow = ΔP/R: MAP has fallen while skin resistance is unchanged, so skin flow falls.',hr:'Unchanged until the reflex acts.',svr:'The arterioles are not the primary change, and the reflex has not acted yet, so SVR is unchanged.'};
-SC.vaso.w2={svr:'Arterioles dilate → resistance ↓ → SVR ↓.',sv:'Lower SVR means lower afterload: the ventricle ejects more each beat, so SV ↑ (end-systolic volume ↓).',skin:'Skin arterioles dilate → resistance ↓ → skin flow ↑ (warm, red).',co:'CO = HR × SV: HR is unchanged and SV ↑, so CO ↑. CO does not fall here because the veins are not affected.',map:'MAP ≈ CO × SVR: SVR falls more than CO rises, so MAP ↓.',vr:'On the first beat venous return has not changed yet; over the next few beats lower arterial pressure shifts blood toward the veins, so it holds or rises a little (VR = CO at steady state).',edv:'Filling has not changed yet on this first beat; it can drift down slightly over the next few beats as the ventricle empties more.',hr:'Unchanged until the reflex acts.'};
+SC.blood.w2={vr:'Less blood volume → central venous pressure ↓ → less blood returns to the heart.',edv:'Less venous return → less filling.',sv:'Less filling → a lower point on the same Frank-Starling curve → SV ↓.',co:'CO = HR × SV: HR is unchanged and SV ↓.',map:'MAP ≈ CO × SVR: SVR is unchanged and CO ↓.',tissue:'MAP has fallen, so blood flow to the organs and tissues falls (Flow = ΔP/R). This fall in perfusion is what defines shock.',hr:'Unchanged until the reflex acts.',svr:'The arterioles are not the primary change, and the reflex has not acted yet, so SVR is unchanged.'};
+SC.vaso.w2={svr:'Arterioles throughout the body dilate → resistance ↓ → SVR ↓.',skin:'Skin arterioles dilate → skin flow ↑: the skin is warm and flushed — classic "warm" septic shock.',map:'MAP ≈ CO × SVR: SVR falls sharply, so MAP ↓ even though the heart is still pumping.',vr:'On the first beat venous return has not changed yet — we are isolating the arteriolar change.',edv:'Filling has not changed yet on this first beat.',hr:'Unchanged until the reflex acts.'};
 const W3={firing:'Lower MAP → less stretch of the carotid sinus and aortic arch → baroreceptor firing ↓.',symp:'Less firing → the medulla increases sympathetic outflow.',vagal:'Less firing → vagal outflow to the SA node ↓.',hr:'Sympathetic ↑ and vagal ↓ at the SA node → HR ↑.',contr:'Sympathetic ↑ (β1) → contractility ↑.',co:'CO = HR × SV: HR ↑, and contractility ↑ with venoconstriction raises SV.'};
 SC.blood.w3={...W3,ven:'Venoconstriction pushes reservoir blood toward the heart, so filling rises again.',art:'Skin, gut, kidney and resting skeletal muscle arterioles constrict (SVR ↑); brain and heart are spared.',map:'MAP ≈ CO × SVR: both rise, so MAP returns near normal.'};
 SC.vaso.w3={...W3,ven:'Venoconstriction pushes reservoir blood toward the heart.',art:'Arteriolar tone ↑ in beds the drug has not fully relaxed (SVR partly restored).',map:'CO ↑ and SVR partly ↑ → MAP rises, but stays below normal.'};
@@ -342,7 +341,7 @@ const TAGS={A1:'Activity 1 · veins control filling',A2:'Activity 2 · heart con
 const TSHORT={A1:'Act 1',A2:'Act 2',A3:'Act 3',BR:'Reflex'};
 const tagS=t=>`<span class="tag" title="${TAGS[t]}">${TSHORT[t]}</span>`;
 const LEGEND=`<div class="legend2">${['A1','A2','A3'].map(t=>`<span><b>${TSHORT[t]}</b> ${TAGS[t].split(' · ')[1]}</span>`).join('')}</div>`;
-const ITAG={map:'A3',vr:'A1',edv:'A1',sv:'A1',fs:'A1',hr:'A2',contr:'A2',co:'A3',svr:'A3',map:'A3',skin:'A3',art:'A3',ven:'A1',firing:'BR',symp:'BR',vagal:'BR'};
+const ITAG={map:'A3',vr:'A1',edv:'A1',sv:'A1',fs:'A1',hr:'A2',contr:'A2',co:'A3',svr:'A3',map:'A3',skin:'A3',tissue:'A3',art:'A3',ven:'A1',firing:'BR',symp:'BR',vagal:'BR'};
 const tag=t=>`<span class="tag" title="${TAGS[t]}">${TAGS[t]}</span>`;
 const FSDESC={'along-down':'lower on the same curve','along-up':'higher on the same curve','none':'at the same point as X','shift-up':'up onto a new, higher curve','shift-down':'down onto a new, lower curve'};
 
@@ -499,7 +498,7 @@ function renderRight(){
       <li>Klabunde RE. ${L('https://cvphysiology.com/cardiac-function/cf008','Effects of afterload on ventricular function')}. <i>Cardiovascular Physiology Concepts</i>. Lower afterload raises stroke volume and lowers end-systolic volume.</li>
       <li>Klabunde RE. ${L('https://cvphysiology.com/cardiac-function/cf027','Cardiac and systemic function curves: changes in systemic vascular resistance')}. <i>Cardiovascular Physiology Concepts</i>. Lower SVR raises cardiac output and venous return.</li>
       <li>Klabunde RE. ${L('https://cvpharmacology.com/vasodilator/vasodilators','Vasodilator drugs')}. <i>Cardiovascular Pharmacology Concepts</i> (cvpharmacology.com). Arterial dilators lower SVR and arterial pressure, raise cardiac output, and trigger reflex tachycardia.</li>
-      <li>${L('https://www.openanesthesia.org/keywords/hydralazine','Hydralazine')}. OpenAnesthesia. Direct arteriolar dilator; reflex tachycardia, flushing.</li>
+      <li>${L('https://www.ncbi.nlm.nih.gov/books/NBK430939/','Distributive shock')}. StatPearls (NCBI Bookshelf). Septic “warm” shock: widespread vasodilation → low SVR, warm flushed skin, low MAP.</li>
       <li>American College of Surgeons Committee on Trauma. <i>Advanced Trauma Life Support (ATLS) Student Course Manual</i>, 10th ed. Chicago: ACS; 2018. Classes of hemorrhage (class II, 15–30% loss: tachycardia with normal blood pressure).</li>
       <li>Klabunde RE. <i>Cardiovascular Physiology Concepts</i>, 3rd ed. Philadelphia: Wolters Kluwer; 2021.</li>
     </ol>
