@@ -208,7 +208,7 @@ table.db{border-collapse:collapse;width:100%;font-size:.92rem}
   .sg-side .fs.mini{max-width:22rem}
   .sg-side .sidebox .node{flex-basis:100%}
 }
-@container (min-width:56rem){
+@container (min-width:40rem){
   .sg{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:1rem;align-items:start}
   .sg-side{display:block;margin-top:0}
   .sg-side .fsrow{margin-top:.8rem}
@@ -220,6 +220,22 @@ table.db{border-collapse:collapse;width:100%;font-size:.92rem}
   .down{font-size:1.05rem;line-height:1.05}
   .card .q{margin-bottom:.5rem}
   .flowc > .tier:has(> .node:nth-child(4)) > .node{flex:0 1 calc(50% - .25rem);max-width:none}
+  /* large classroom touch screen: keep the whole step on one screen */
+  .layout{grid-template-columns:minmax(0,.6fr) minmax(0,1.4fr)}
+  .stage{max-width:min(20rem,100%)}
+  .main{padding-block:.6rem .8rem}
+  .scorebar{padding:.3rem .9rem;margin-bottom:.5rem}
+  .stem{margin-bottom:.5rem;font-size:1rem}
+  .stepper{margin-bottom:.5rem}
+  .card{padding:.7rem .9rem}
+  .card h2{font-size:1.3rem}
+  .card .q{font-size:1rem;margin-bottom:.4rem}
+  .down{font-size:.95rem;line-height:.9}
+  .sidebox{padding:.5rem}
+  .sidebox .lab{margin-bottom:.3rem}
+  .sg-side .fs.mini{max-height:11.5rem;margin:0 auto}
+  .sg-side .fsrow{margin-top:.6rem}
+  .row{margin-top:.5rem}
 }
 
 .credit{max-width:1400px;margin:1.2rem auto 1.5rem;font-size:.85rem;color:var(--muted);line-height:1.45;border-top:1px solid var(--line);padding-top:.8rem}
