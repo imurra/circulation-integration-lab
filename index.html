@@ -223,7 +223,7 @@ table.db{border-collapse:collapse;width:100%;font-size:.92rem}
   /* large classroom touch screen: keep the whole step on one screen */
   .layout{grid-template-columns:minmax(0,.6fr) minmax(0,1.4fr)}
   .stage{max-width:min(20rem,100%)}
-  .main{padding-block:.6rem .8rem}
+  .main{padding-block:.4rem .8rem}
   .scorebar{padding:.3rem .9rem;margin-bottom:.5rem}
   .stem{margin-bottom:.5rem;font-size:1rem}
   .stepper{margin-bottom:.5rem}
@@ -236,6 +236,30 @@ table.db{border-collapse:collapse;width:100%;font-size:.92rem}
   .sg-side .fs.mini{max-height:11.5rem;margin:0 auto}
   .sg-side .fsrow{margin-top:.6rem}
   .row{margin-top:.5rem}
+  #sideFb .fb{margin-top:.5rem;font-size:.85rem;line-height:1.35;padding:.45rem .65rem}
+  #sideFb .fb .chainline{font-size:.88rem}
+  #sideFb .abbr{margin-top:.6rem;font-size:.72rem;line-height:1.35;gap:0 .7rem}
+  #sideFb .go{padding-block:.4rem}
+  .layout>.panel{max-height:var(--pmax,calc(100vh - 1.2rem));overflow-y:auto;overscroll-behavior:contain}
+  .sbtn{padding-block:.3rem}
+  .layout>.panel.more::after{content:'scroll for more \2193';position:sticky;bottom:calc(-.7rem - 1px);display:block;margin:-2.2rem -.7rem -.7rem;padding:1.6rem 0 .6rem;text-align:center;font-size:.85rem;font-weight:800;color:var(--plum);background:linear-gradient(rgba(255,255,255,0),var(--surface) 45%);pointer-events:none}
+  .stepper{margin-bottom:.4rem}
+  .node .why{font-size:.82rem;line-height:1.28}
+  .flowc > .tier > .node.ok:only-child,.flowc > .tier > .node.no:only-child{max-width:36rem}
+  .flowc:has(.node.ok,.node.no) .down{font-size:.8rem;line-height:.75}
+  .flowc:has(.node.ok,.node.no) .tier{gap:.35rem}
+  .node.ok,.node.no{row-gap:.05rem;padding-top:.1rem;padding-bottom:.25rem}
+  .card .q{font-size:.95rem;line-height:1.3}
+  .band{padding-block:.4rem}
+  h1{font-size:1.35rem}
+  .band .sub{font-size:.85rem;margin-top:0}
+  .scorebar .clock{font-size:1.15rem;padding:0 .5rem}
+  .scorebar .tot{font-size:1.1rem}
+  .stem{line-height:1.3}
+  .node .why{font-size:.8rem;line-height:1.25}
+  .card{padding-bottom:.1rem}
+  .card h2{font-size:1.2rem}
+  .stem{font-size:.95rem}
 }
 
 .credit{max-width:1400px;margin:1.2rem auto 1.5rem;font-size:.85rem;color:var(--muted);line-height:1.45;border-top:1px solid var(--line);padding-top:.8rem}
@@ -286,6 +310,7 @@ table.db{border-collapse:collapse;width:100%;font-size:.92rem}
         <span class="badge a" id="b-art" style="left:78%;top:69%" hidden></span>
       </div>
       <div class="capline"><span id="stateCap" class="cap"></span><span class="skinchip"><span id="skinChip" class="sw"></span><span id="skinChipTxt"></span></span></div>
+      <div id="sideFb"></div>
     </section>
 
     <section aria-label="Steps">
@@ -532,6 +557,11 @@ function renderRight(){
     h+=`<p class="abbr">${AB.map(([a,b])=>`<span><b>${a}</b> ${b}</span>`).join('')}</p>
       <div class="row foot">${open?'<button class="link" id="rev" type="button">Reveal answers (not scored)</button>':'<span></span>'}<button class="link" id="rstep" type="button">↺ Reset this step</button></div>`;}
   $('card').innerHTML=h;
+  /* wide screens: feedback, next button and abbreviations sit under the diagram so the chain fits on one screen */
+  const sf=$('sideFb'); sf.innerHTML='';
+  if(matchMedia('(min-width:981px)').matches){const cd=$('card');
+    cd.querySelectorAll(':scope > .fb, :scope > .abbr, :scope > .row').forEach(el=>{if(el.querySelector('#sub'))return;sf.appendChild(el);});}
+  fitPanel();
   const rs=$('rstep'); if(rs) rs.onclick=()=>resetStep(step);
   const c=$('card');
   c.querySelectorAll('[data-site]').forEach(b=>b.onclick=()=>pickSite(b.dataset.site));
@@ -547,6 +577,12 @@ function renderRight(){
   const sub=$('sub'); if(sub)sub.onclick=submit;
   if(nx)nx.onclick=()=>{if(step===2){step=3;}else{const o=cur==='blood'?'vaso':'blood';if(prog[o].s3done)return;cur=o;site=null;step=prog[o].s2done?3:2;view=progView();}renderAll();};
 }
+function fitPanel(){const pn=document.querySelector('.layout>.panel');if(!pn)return;
+  const top=document.querySelector('.layout').getBoundingClientRect().top+scrollY;
+  pn.style.setProperty('--pmax',Math.max(320,innerHeight-top-8)+'px');pn.scrollTop=0;requestAnimationFrame(()=>{pn.scrollTop=0;moreCue();});}
+function moreCue(){const pn=document.querySelector('.layout>.panel');if(pn)pn.classList.toggle('more',pn.scrollHeight-pn.clientHeight-pn.scrollTop>6);}
+document.addEventListener('DOMContentLoaded',()=>{const pn=document.querySelector('.layout>.panel');if(pn)pn.addEventListener('scroll',moreCue,{passive:true});});
+addEventListener('resize',fitPanel);
 function resetStep(n){const p=P();
   if(n<=2){p.p2={};p.r2={};p.fsPt=null;p.s2done=false;Object.keys(p.meta).filter(x=>x[0]==='2').forEach(x=>delete p.meta[x]);}
   p.p3={};p.r3={};p.s3done=false;Object.keys(p.meta).filter(x=>x[0]==='3').forEach(x=>delete p.meta[x]);
